@@ -16,8 +16,12 @@ import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import cn.sharesdk.framework.ShareSDK;
+import cn.sharesdk.onekeyshare.OnekeyShare;
 
 public class WeatherActivity extends Activity implements OnClickListener{
 
@@ -54,7 +58,11 @@ public class WeatherActivity extends Activity implements OnClickListener{
 	 * 更新天气按钮
 	 */
 	private Button refreshWeather;
-	
+	/**
+	 * 分享按钮
+	 */
+	private ImageView shareImageView;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -70,6 +78,7 @@ public class WeatherActivity extends Activity implements OnClickListener{
 		currentDateText = (TextView) findViewById(R.id.current_date);
 		switchCity = (Button) findViewById(R.id.switch_city);
 		refreshWeather = (Button) findViewById(R.id.refresh_weather);
+		shareImageView= (ImageView) findViewById(R.id.share_imageview);
 		String countyCode = getIntent().getStringExtra("county_code");
 		if (!TextUtils.isEmpty(countyCode)) {
 			// 有县级代号时就去查询天气
@@ -83,6 +92,13 @@ public class WeatherActivity extends Activity implements OnClickListener{
 		}
 		switchCity.setOnClickListener(this);
 		refreshWeather.setOnClickListener(this);
+		shareImageView.setOnClickListener(this);
+
+		//初始化ShareSDK
+		ShareSDK.initSDK(this);
+
+
+
 	}
 	
 	@Override
@@ -102,6 +118,13 @@ public class WeatherActivity extends Activity implements OnClickListener{
 				queryWeatherInfo(weatherCode);
 			}
 			break;
+			case R.id.share_imageview:
+				OnekeyShare oks=new OnekeyShare();
+				//关闭sso授权
+				oks.disableSSOWhenAuthorize();
+				oks.setTitle("天气分享");
+				oks.setText("分享相关心情");
+				oks.show(WeatherActivity.this);
 		default:
 			break;
 		}
